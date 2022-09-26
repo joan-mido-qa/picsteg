@@ -58,11 +58,12 @@ jobs:
       - name: Format Package
         uses: actions-rs/cargo@v1
         with:
-          command: check
+          command: fmt
           args: --all -- --check
 
   quality:
     runs-on: ubuntu-latest
+    name: Quality
     steps:
       - name: Checkout
         uses: actions/checkout@v3
