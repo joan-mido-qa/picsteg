@@ -149,7 +149,7 @@ pub mod tests {
     fn error_open_image_file() {
         let tmp_dir = TempDir::new("tmp").unwrap();
         let secret_path = tmp_dir.path().join("secret.txt");
-        
+
         File::create(&secret_path).unwrap();
 
         open_image(&secret_path);
