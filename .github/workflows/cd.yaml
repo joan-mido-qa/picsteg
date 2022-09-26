@@ -1,0 +1,15 @@
+---
+name: Continuous Delivery
+
+on:
+  push:
+    branches:
+    - main
+
+concurrency: release
+
+jobs:
+  continuous-integration:
+    name: Continuous Integration
+    uses: ./.github/workflows/ci.yaml
+    secrets: inherit
