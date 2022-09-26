@@ -11,7 +11,11 @@ use utils::{decode_image, encode_image, open_image, open_secret};
 #[clap(author, version, about, long_about = None)]
 #[clap(propagate_version = true)]
 struct Cli {
-    #[clap(short, long, help="Number of bits to encode or decode per byte. Default: 1")]
+    #[clap(
+        short,
+        long,
+        help = "Number of bits to encode or decode per byte. Default: 1"
+    )]
     bits: Option<i8>,
 
     #[clap(subcommand)]
@@ -63,10 +67,7 @@ fn main() {
                 panic!("Encoded image could not be saved: {}", error)
             }
         }
-        Command::Decode {
-            image,
-            output,
-        } => {
+        Command::Decode { image, output } => {
             let image: RgbImage = open_image(image);
             let secret: String = decode_image(image, bits);
 
