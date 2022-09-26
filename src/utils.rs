@@ -93,14 +93,14 @@ pub fn decode_image(image: RgbImage, bits: i8) -> String {
         panic!("Use the same amount of encoding bits for decoding the Image Secret.")
     }
 
-    return secret.replace(DELIMITER, "");
+    secret.replace(DELIMITER, "")
 }
 
 fn to_binary(number: u8) -> String {
-    return format!("{:0>8}", format!("{:b}", number));
+    format!("{:0>8}", format!("{:b}", number))
 }
 
-fn is_encodable(image: &RgbImage, secret: &String, bits: i8) -> bool {
+fn is_encodable(image: &RgbImage, secret: &str, bits: i8) -> bool {
     let chunks = ((secret.chars().count() as f64 / bits as f64).ceil()) as i64;
     let n_bytes = (image.pixels().len() * 3) as i64;
 
@@ -108,7 +108,7 @@ fn is_encodable(image: &RgbImage, secret: &String, bits: i8) -> bool {
         return false;
     }
 
-    return true;
+    true
 }
 
 fn text_to_bits(text: String) -> String {
@@ -118,7 +118,7 @@ fn text_to_bits(text: String) -> String {
         bits += &to_binary(byte);
     }
 
-    return bits;
+    bits
 }
 
 #[cfg(test)]
