@@ -26,7 +26,7 @@ pub fn encode_image(mut image: RgbImage, secret: String, bits: i8) -> RgbImage {
         panic!("Bits to encode must be higher than 0.")
     }
 
-    let mut secret_bits = text_to_bits(secret.to_owned() + DELIMITER);
+    let mut secret_bits = text_to_bits(secret + DELIMITER);
 
     if !is_encodable(&image, &secret_bits, bits) {
         panic!("The Secret is too large to be encoded.")
