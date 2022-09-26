@@ -1,4 +1,8 @@
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 name: Continuous Integration
 
@@ -7,7 +11,18 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/cargo
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Check Package
+        uses: actions-rs/cargo@v1
         with:
           command: check
 
@@ -15,7 +30,18 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/cargo
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Test Package
+        uses: actions-rs/cargo@v1
         with:
           command: test
 
@@ -23,9 +49,20 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/cargo
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          command: fmt
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Format Package
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
           args: --all -- --check
 
   quality:
