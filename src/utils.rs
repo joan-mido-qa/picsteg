@@ -5,8 +5,12 @@ use image::{io::Reader, RgbImage};
 pub const DELIMITER: &str = "#####";
 
 pub fn open_secret(path: &std::path::PathBuf) -> String {
+    // COMMENT: For patterns with only two variants, it is considered better practice
+    // to just use the `if let` struct: https://rust-lang.github.io/rust-clippy/master/#single_match_else
     match fs::read_to_string(path) {
         Ok(secret) => secret,
+        // COMMENT: You don't usually want to panic here. It is better practice to propage the error
+        // upwards and control the errors a the top level (the main function): https://doc.rust-lang.org/book/ch09-03-to-panic-or-not-to-panic.html
         Err(error) => panic!("Error opening the secret to encode: {}", error),
     }
 }
@@ -22,6 +26,8 @@ pub fn open_image(path: &std::path::PathBuf) -> RgbImage {
 }
 
 pub fn encode_image(mut image: RgbImage, secret: String, bits: i8) -> RgbImage {
+    // COMMENT: Use a type to avoid having values with zero, instead of a runtime comparison.
+    // plus you probably want it positive, right? https://doc.rust-lang.org/std/num/struct.NonZeroU8.html
     if bits == 0 {
         panic!("Bits to encode must be higher than 0.")
     }
@@ -29,15 +35,19 @@ pub fn encode_image(mut image: RgbImage, secret: String, bits: i8) -> RgbImage {
     let mut secret_bits = text_to_bits(secret + DELIMITER);
 
     if !is_encodable(&image, &secret_bits, bits) {
+        // COMMENT: Control the error
         panic!("The Secret is too large to be encoded.")
     }
 
+    // COMMENT: I don´t think this lifetime 'encoding is necessary
     'encoding: for pixel in image.pixels_mut() {
         for color in pixel.0.iter_mut() {
             if secret_bits.is_empty() {
                 break 'encoding;
             }
 
+            // COMMENT: let n_bits = secret_bits.chars().count().max(bits as usize)
+            // to avoid an extra comparison
             let mut n_bits = bits as usize;
 
             if n_bits > secret_bits.chars().count() {
@@ -48,6 +58,8 @@ pub fn encode_image(mut image: RgbImage, secret: String, bits: i8) -> RgbImage {
 
             new_color.push_str(&secret_bits[..n_bits]);
 
+            // COMMENT: I wouldn't overwrite secret_bits everytime, just add an offset to the slice
+            // and you avoid an extra mutable variable.
             secret_bits = secret_bits[n_bits..].to_string();
 
             *color = u8::from_str_radix(&new_color, 2).unwrap();
@@ -58,6 +70,7 @@ pub fn encode_image(mut image: RgbImage, secret: String, bits: i8) -> RgbImage {
 }
 
 pub fn decode_image(image: RgbImage, bits: i8) -> String {
+    // COMMENT: use typing!
     if bits == 0 {
         panic!("Bits to decode must be higher than 0.")
     }
